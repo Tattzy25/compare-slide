@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Home() {
   const [img1, setImg1] = useState(
@@ -10,12 +10,13 @@ export default function Home() {
   const [img2, setImg2] = useState(
     "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80&sat=-100"
   );
+  const [origin, setOrigin] = useState("https://compare-dun.vercel.app");
 
-  // Construct the URL with current parameters
-  const origin =
-    globalThis.window === undefined
-      ? "https://compare-dun.vercel.app"
-      : globalThis.window.location.origin;
+  useEffect(() => {
+    if (globalThis.window !== undefined) {
+      setOrigin(globalThis.window.location.origin);
+    }
+  }, []);
 
   const embedUrl = `${origin}/embed?img1=${encodeURIComponent(
     img1

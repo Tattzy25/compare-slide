@@ -95,7 +95,7 @@ interface CompareSliderProps extends DivProps {
   orientation?: Orientation;
 }
 
-function CompareSlider(props: CompareSliderProps) {
+function CompareSlider(props: Readonly<CompareSliderProps>) {
   const {
     value: valueProp,
     defaultValue = 50,
@@ -225,36 +225,33 @@ function CompareSlider(props: CompareSliderProps) {
       propsRef.current.onKeyDown?.(event);
       if (event.defaultPrevented) return;
 
-      const currentValue = store.getState().value;
-      const isVertical = propsRef.current.orientation === "vertical";
+      const { value: currentValue } = store.getState();
+      const stepValue = propsRef.current.step;
 
-      if (event.key === "Home") {
+      const updateValue = (newValue: number) => {
         event.preventDefault();
-        store.setState("value", 0);
-      } else if (event.key === "End") {
-        event.preventDefault();
-        store.setState("value", 100);
-      } else if (PAGE_KEYS.concat(ARROW_KEYS).includes(event.key)) {
-        event.preventDefault();
-
-        const isPageKey = PAGE_KEYS.includes(event.key);
-        const isSkipKey =
-          isPageKey || (event.shiftKey && ARROW_KEYS.includes(event.key));
-        const multiplier = isSkipKey ? 10 : 1;
-
-        let direction = 0;
-        if (isVertical) {
-          const isDecreaseKey = ["ArrowUp", "PageUp"].includes(event.key);
-          direction = isDecreaseKey ? -1 : 1;
-        } else {
-          const isDecreaseKey = ["ArrowLeft", "PageUp"].includes(event.key);
-          direction = isDecreaseKey ? -1 : 1;
-        }
-
-        const stepInDirection = propsRef.current.step * multiplier * direction;
-        const newValue = clamp(currentValue + stepInDirection, 0, 100);
         store.setState("value", newValue);
-      }
+      };
+
+      if (event.key === "Home") return updateValue(0);
+      if (event.key === "End") return updateValue(100);
+
+      if (!PAGE_KEYS.concat(ARROW_KEYS).includes(event.key)) return;
+      event.preventDefault();
+
+      const isPageKey = PAGE_KEYS.includes(event.key);
+      const isSkipKey =
+        isPageKey || (event.shiftKey && ARROW_KEYS.includes(event.key));
+      const multiplier = isSkipKey ? 10 : 1;
+
+      const isVertical = propsRef.current.orientation === "vertical";
+      const isDecreaseKey = (
+        isVertical ? ["ArrowUp", "PageUp"] : ["ArrowLeft", "PageUp"]
+      ).includes(event.key);
+      const direction = isDecreaseKey ? -1 : 1;
+
+      const stepInDirection = stepValue * multiplier * direction;
+      store.setState("value", clamp(currentValue + stepInDirection, 0, 100));
     },
     [store, propsRef],
   );
@@ -305,7 +302,7 @@ interface CompareSliderBeforeProps extends DivProps {
   label?: string;
 }
 
-function CompareSliderBefore(props: CompareSliderBeforeProps) {
+function CompareSliderBefore(props: Readonly<CompareSliderBeforeProps>) {
   const { className, children, style, label, asChild, ref, ...beforeProps } =
     props;
 
@@ -350,7 +347,7 @@ interface CompareSliderAfterProps extends DivProps {
   label?: string;
 }
 
-function CompareSliderAfter(props: CompareSliderAfterProps) {
+function CompareSliderAfter(props: Readonly<CompareSliderAfterProps>) {
   const { className, children, style, label, asChild, ref, ...afterProps } =
     props;
 
@@ -391,7 +388,7 @@ function CompareSliderAfter(props: CompareSliderAfterProps) {
   );
 }
 
-function CompareSliderHandle(props: DivProps) {
+function CompareSliderHandle(props: Readonly<DivProps>) {
   const { className, children, style, asChild, ref, ...handleProps } = props;
 
   const value = useStore((state) => state.value);
@@ -457,11 +454,18 @@ interface CompareSliderLabelProps extends DivProps {
   side?: "before" | "after";
 }
 
-function CompareSliderLabel(props: CompareSliderLabelProps) {
+function CompareSliderLabel(props: Readonly<CompareSliderLabelProps>) {
   const { className, children, side, asChild, ref, ...labelProps } = props;
 
   const { orientation } = useCompareSliderContext(LABEL_NAME);
   const isVertical = orientation === "vertical";
+
+  let positionClass;
+  if (isVertical) {
+    positionClass = side === "before" ? "top-2 left-2" : "bottom-2 left-2";
+  } else {
+    positionClass = side === "before" ? "top-2 left-2" : "top-2 right-2";
+  }
 
   const LabelPrimitive = asChild ? Slot : "div";
 
@@ -471,13 +475,7 @@ function CompareSliderLabel(props: CompareSliderLabelProps) {
       data-slot="compare-slider-label"
       className={cn(
         "absolute z-20 rounded-md border border-border bg-background/80 px-3 py-1.5 font-medium text-sm backdrop-blur-sm",
-        isVertical
-          ? side === "before"
-            ? "top-2 left-2"
-            : "bottom-2 left-2"
-          : side === "before"
-            ? "top-2 left-2"
-            : "top-2 right-2",
+        positionClass,
         className,
       )}
       {...labelProps}
