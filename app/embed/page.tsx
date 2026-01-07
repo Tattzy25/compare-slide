@@ -11,18 +11,16 @@ export default async function Embed({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }>) {
   const params = await searchParams;
-  const { img1: img1Param, img2: img2Param } = params;
+  const { img1: img1Param, img2: img2Param, orientation: orientationParam } = params;
 
-  const img1 =
-    (img1Param as string) ||
-    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80";
-  const img2 =
-    (img2Param as string) ||
-    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80&sat=-100";
+  const img1 = (img1Param as string) || "";
+  const img2 = (img2Param as string) || "";
+  const orientation = (orientationParam as "horizontal" | "vertical") || "horizontal";
 
   return (
     <CompareSlider
       defaultValue={50}
+      orientation={orientation}
       className="h-screen w-full overflow-hidden"
     >
       <CompareSliderBefore>

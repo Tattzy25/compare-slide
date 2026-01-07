@@ -4,12 +4,10 @@
 import { useState, useEffect } from "react";
 
 export default function Home() {
-  const [img1, setImg1] = useState(
-    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80"
-  );
-  const [img2, setImg2] = useState(
-    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920&h=1080&fit=crop&auto=format&fm=webp&q=80&sat=-100"
-  );
+  const [img1, setImg1] = useState("");
+  const [img2, setImg2] = useState("");
+  const [aspectRatio, setAspectRatio] = useState("16/9");
+  const [orientation, setOrientation] = useState("horizontal");
   const [origin, setOrigin] = useState("https://compare-dun.vercel.app");
 
   useEffect(() => {
@@ -20,12 +18,14 @@ export default function Home() {
 
   const embedUrl = `${origin}/embed?img1=${encodeURIComponent(
     img1
-  )}&img2=${encodeURIComponent(img2)}`;
+  )}&img2=${encodeURIComponent(img2)}&orientation=${orientation}`;
 
   const embedCode = `<iframe 
   src="${embedUrl}" 
-  style="width: 100%; height: 600px; border: none;"
   title="Comparison Slider"
+  loading="lazy"
+  sandbox="allow-scripts allow-same-origin"
+  style="border: none; width: 100%; height: 0; aspect-ratio: ${aspectRatio};"
 ></iframe>`;
 
   return (
@@ -37,7 +37,7 @@ export default function Home() {
             <iframe
               src={`/embed?img1=${encodeURIComponent(
                 img1
-              )}&img2=${encodeURIComponent(img2)}`}
+              )}&img2=${encodeURIComponent(img2)}&orientation=${orientation}`}
               title="Comparison Slider Widget"
               className="size-full border-0"
               allowFullScreen
@@ -93,6 +93,43 @@ export default function Home() {
                     placeholder="Enter image URL..."
                     className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
                   />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label
+                    htmlFor="aspect-ratio-input"
+                    className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                  >
+                    Aspect Ratio
+                  </label>
+                  <select
+                    id="aspect-ratio-input"
+                    value={aspectRatio}
+                    onChange={(e) => setAspectRatio(e.target.value)}
+                    className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                  >
+                    <option value="16/9">16:9 (Landscape)</option>
+                    <option value="4/3">4:3 (Standard)</option>
+                    <option value="1/1">1:1 (Square)</option>
+                    <option value="3/4">3:4 (Portrait)</option>
+                    <option value="9/16">9:16 (Story)</option>
+                  </select>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label
+                    htmlFor="orientation-input"
+                    className="text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                  >
+                    Orientation
+                  </label>
+                  <select
+                    id="orientation-input"
+                    value={orientation}
+                    onChange={(e) => setOrientation(e.target.value)}
+                    className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                  >
+                    <option value="horizontal">Horizontal</option>
+                    <option value="vertical">Vertical</option>
+                  </select>
                 </div>
               </div>
             </div>
