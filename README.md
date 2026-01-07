@@ -1,6 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Comparison Slider
 
-## Getting Started
+This project provides a clean, embeddable comparison slider widget.
+
+## Features
+
+- **Mobile First**: Fully responsive design that works on all devices.
+- **Embeddable**: Easily embed the slider into any website using an `<iframe>`.
+- **Dynamic Images**: Customize the before/after images via URL parameters.
+
+## Usage
+
+### Embed the Widget
+
+To embed the slider, use the following iframe code:
+
+```html
+<iframe 
+  src="https://compare-dun.vercel.app/embed?img1=YOUR_IMAGE_1_URL&img2=YOUR_IMAGE_2_URL" 
+  style="width: 100%; height: 600px; border: none;"
+  title="Comparison Slider"
+></iframe>
+```
+
+Replace `YOUR_IMAGE_1_URL` and `YOUR_IMAGE_2_URL` with your actual image URLs.
+
+### Dynamic Preview
+
+Visit the main page to preview your slider and generate the embed code instantly:
+[https://compare-dun.vercel.app/](https://compare-dun.vercel.app/)
+
+## Development
 
 First, run the development server:
 

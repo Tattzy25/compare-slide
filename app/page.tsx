@@ -14,7 +14,7 @@ export default function Home() {
   // Construct the URL with current parameters
   const origin =
     globalThis.window === undefined
-      ? "https://your-domain.com"
+      ? "https://compare-dun.vercel.app"
       : globalThis.window.location.origin;
 
   const embedUrl = `${origin}/embed?img1=${encodeURIComponent(
